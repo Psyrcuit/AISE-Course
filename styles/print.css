@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Print stylesheet. Hide chrome, expand collapsed sections, plain colors.
+   ========================================================================== */
+
+@media print {
+  :root {
+    --surface-0: #fff; --surface-1: #fff; --surface-2: #fff; --surface-3: #fff;
+    --text-1: #000; --text-2: #222; --text-3: #444;
+    --border-1: #ccc; --border-2: #aaa;
+    --accent: #4C1D95; --accent-strong: #4C1D95;
+  }
+  body { font-size: 11pt; line-height: 1.45; color: #000; background: #fff; }
+  .rail, .topstrip, #toasts, .cmd-overlay, .sheet, .icon-btn, .rail-toggle,
+  .btn, .save-toggle {
+    display: none !important;
+  }
+  .app { grid-template-columns: 1fr !important; }
+  .main {
+    grid-template-columns: 1fr !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .context { display: none; }
+  .card { border: 1px solid #aaa; box-shadow: none; page-break-inside: avoid; }
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+  a[href^="http"]::after, a[href^="#/"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #555;
+  }
+  a[href^="#/concept/"]::after,
+  a[href^="#/module/"]::after,
+  a[href^="#/playbook/"]::after,
+  a[href^="#/decision/"]::after { content: ""; }
+  h1, h2, h3 { page-break-after: avoid; }
+  pre { page-break-inside: avoid; background: #f6f6f6; border: 1px solid #ccc; }
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="The map of everything a 2026 AI Solutions Engineer or Architect needs to know. 16 modules, 514 concepts, an interactive system map, gamified, offline-ready.">
+  <title>AISE 2026 Course</title>
+
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/surfaces.css">
+  <link rel="stylesheet" href="styles/map.css">
+  <link rel="stylesheet" href="styles/motion.css">
+  <link rel="stylesheet" href="styles/print.css">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#B4A0FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+  <a class="skip-link" href="#view">Skip to main content</a>
+
+  <div id="sr-polite" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+  <div id="sr-assertive" aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+
+  <div class="app">
+
+    <!-- Side rail -->
+    <nav id="rail" class="rail" aria-label="Primary">
+      <a href="#/" class="rail-brand" aria-label="AISE 2026 home">
+        <span class="rail-brand-mark" aria-hidden="true">A</span>
+        <span class="rail-brand-text">AISE<small>2026 edition</small></span>
+      </a>
+
+      <a class="rail-link" href="#/">
+        <span class="ico" aria-hidden="true">◯</span>
+        Today
+      </a>
+      <a class="rail-link" href="#/map">
+        <span class="ico" aria-hidden="true">◇</span>
+        System Map
+      </a>
+
+      <div class="rail-section">Learn</div>
+      <a class="rail-link" href="#/modules">
+        <span class="ico" aria-hidden="true">▤</span>
+        Modules
+      </a>
+      <a class="rail-link" href="#/glossary">
+        <span class="ico" aria-hidden="true">≡</span>
+        Glossary
+      </a>
+      <a class="rail-link" href="#/topics">
+        <span class="ico" aria-hidden="true">✦</span>
+        Topics
+      </a>
+      <a class="rail-link" href="#/path">
+        <span class="ico" aria-hidden="true">⇾</span>
+        Path
+      </a>
+
+      <div class="rail-section">Practice</div>
+      <a class="rail-link" href="#/practice">
+        <span class="ico" aria-hidden="true">◐</span>
+        Practice
+      </a>
+      <a class="rail-link" href="#/review">
+        <span class="ico" aria-hidden="true">↻</span>
+        Review
+      </a>
+
+      <div class="rail-section">Build</div>
+      <a class="rail-link" href="#/toolkit">
+        <span class="ico" aria-hidden="true">▦</span>
+        Toolkit
+      </a>
+      <a class="rail-link" href="#/playbooks">
+        <span class="ico" aria-hidden="true">⊟</span>
+        Playbooks
+      </a>
+      <a class="rail-link" href="#/decisions">
+        <span class="ico" aria-hidden="true">⌖</span>
+        Decision tools
+      </a>
+
+      <div class="rail-section">You</div>
+      <a class="rail-link" href="#/library">
+        <span class="ico" aria-hidden="true">★</span>
+        Library
+      </a>
+      <a class="rail-link" href="#/career">
+        <span class="ico" aria-hidden="true">⌘</span>
+        Career
+      </a>
+      <a class="rail-link" href="#/profile">
+        <span class="ico" aria-hidden="true">◐</span>
+        Profile
+      </a>
+      <a class="rail-link" href="#/settings">
+        <span class="ico" aria-hidden="true">⚙</span>
+        Settings
+      </a>
+
+      <div class="rail-status">
+        <div class="row"><span>Tier</span><strong id="rail-tier" class="tabular">Tier 1: Curious Engineer</strong></div>
+        <div class="row"><span>XP</span><strong id="rail-xp" class="tabular">0 XP</strong></div>
+        <div class="row"><span>Streak</span><strong id="rail-streak" class="tabular">0d</strong></div>
+      </div>
+    </nav>
+    <div id="rail-scrim" class="rail-scrim" aria-hidden="true"></div>
+
+    <!-- Shell: top strip + main + right rail -->
+    <div class="shell">
+      <div class="topstrip">
+        <button id="rail-toggle" class="icon-btn rail-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="rail">
+          <span aria-hidden="true">☰</span>
+        </button>
+        <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+        <div class="topstrip-actions">
+          <!-- Hidden helpers for legacy gamification top-bar selectors used by tests -->
+          <span id="xp-count" class="sr-only">0 XP</span>
+          <span id="tier-name" class="sr-only">Curious Engineer</span>
+          <button id="cmd-trigger" class="cmd-trigger" type="button" aria-label="Open command palette">
+            <span class="ico" aria-hidden="true">⌕</span>
+            <span>Search</span>
+            <span class="kbd">⌘K</span>
+          </button>
+          <button id="voice-trigger" class="icon-btn" type="button" aria-label="Voice search" title="Voice search">
+            <span class="ico" aria-hidden="true">🎤</span>
+          </button>
+          <button id="theme-toggle" class="icon-btn" type="button" aria-pressed="true" aria-label="Switch to light mode" title="Toggle dark/light">
+            <span class="ico" aria-hidden="true">◐</span>
+          </button>
+        </div>
+      </div>
+
+      <main id="main-region" class="main">
+        <article id="view" tabindex="-1" aria-label="Course content">
+          <noscript>
+            <h1>AISE 2026 Course</h1>
+            <p>This course is a JavaScript app. Please enable JavaScript and reload.</p>
+          </noscript>
+        </article>
+        <aside id="context" class="context" aria-label="On this page" style="display: none;"></aside>
+      </main>
+    </div>
+
+  </div>
+
+  <div id="toasts" role="log" aria-live="polite" aria-relevant="additions" aria-label="Notifications"></div>
+
+  <!-- Mobile bottom-tab navigation (visible only under 768px via CSS) -->
+  <nav id="bottom-tabs" class="bottom-tabs" aria-label="Mobile primary navigation">
+    <a class="bottom-tab" href="#/" data-tab-match="^#?/?$">
+      <span class="bottom-tab-ico" aria-hidden="true">◯</span>
+      <span class="bottom-tab-label">Today</span>
+    </a>
+    <a class="bottom-tab" href="#/path" data-tab-match="^#/path">
+      <span class="bottom-tab-ico" aria-hidden="true">⇾</span>
+      <span class="bottom-tab-label">Path</span>
+    </a>
+    <a class="bottom-tab" href="#/practice" data-tab-match="^#/(practice|review|interview)">
+      <span class="bottom-tab-ico" aria-hidden="true">◐</span>
+      <span class="bottom-tab-label">Practice</span>
+    </a>
+    <a class="bottom-tab" href="#/toolkit" data-tab-match="^#/(toolkit|library|playbooks|decisions)">
+      <span class="bottom-tab-ico" aria-hidden="true">▦</span>
+      <span class="bottom-tab-label">Build</span>
+    </a>
+    <button class="bottom-tab" id="bottom-tab-more" type="button" aria-label="More navigation">
+      <span class="bottom-tab-ico" aria-hidden="true">⋯</span>
+      <span class="bottom-tab-label">More</span>
+    </button>
+  </nav>
+
+  <!-- Vendor: 2D force-directed graph viewer (Canvas2D + d3-force). UMD, sets window.ForceGraph. -->
+  <script src="vendor/force-graph.min.js"></script>
+
+  <!-- App: ESM entry. -->
+  <script type="module" src="js/app.js"></script>
+
+  <!-- Wire the cmd-trigger to dispatch the open event. Inline because it's UI glue. -->
+  <script>
+    document.getElementById('cmd-trigger')?.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('aise26:open-cmdk'));
+    });
+    document.getElementById('voice-trigger')?.addEventListener('click', () => {
+      if (window.aise26 && window.aise26.voice) window.aise26.voice.start();
+    });
+    document.getElementById('bottom-tab-more')?.addEventListener('click', () => {
+      const rail = document.getElementById('rail');
+      const toggle = document.getElementById('rail-toggle');
+      if (rail) {
+        const open = rail.getAttribute('data-open') === 'true';
+        rail.setAttribute('data-open', String(!open));
+        if (toggle) toggle.setAttribute('aria-expanded', String(!open));
+      }
+    });
+    // Highlight active bottom-tab on every hashchange.
+    function refreshBottomTabs() {
+      const hash = window.location.hash || '#/';
+      document.querySelectorAll('.bottom-tab[data-tab-match]').forEach(a => {
+        const re = new RegExp(a.getAttribute('data-tab-match'));
+        a.toggleAttribute('aria-current', re.test(hash));
+        if (re.test(hash)) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+      });
+    }
+    window.addEventListener('hashchange', refreshBottomTabs);
+    refreshBottomTabs();
+    // PWA service worker (only on HTTPS or localhost)
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/i.test(location.hostname))) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

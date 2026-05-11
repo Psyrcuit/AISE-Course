@@ -1,0 +1,24 @@
+# Build / test artifacts
+node_modules/
+test-results/
+playwright-report/
+.cache/
+
+# Local dev archives (kept locally for reference; not for git history)
+_archive/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Claude Code transient
+.claude/usage.log
+.claude/cache/
+
+# Coverage / temp
+coverage/
+*.log
+*.tmp

@@ -1,0 +1,27 @@
+/* ==========================================================================
+   Motion: micro-interactions and route-transition fades.
+   All animations respect prefers-reduced-motion (gated in base.css).
+   ========================================================================== */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+.fade-up { animation: fade-up var(--dur-mid) var(--ease-out) both; }
+.fade-in { animation: fade-in var(--dur-mid) var(--ease-out) both; }
+.delay-1 { animation-delay: 50ms; }
+.delay-2 { animation-delay: 120ms; }
+.delay-3 { animation-delay: 220ms; }

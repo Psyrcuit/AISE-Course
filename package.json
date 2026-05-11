@@ -1,0 +1,21 @@
+{
+  "name": "course",
+  "version": "1.0.0",
+  "description": "This package contains everything needed to kick off a 2-session autonomous Claude Code build of the course.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@axe-core/cli": "^4.11.3",
+    "@playwright/test": "^1.59.1",
+    "html-validate": "^10.15.0"
+  }
+}

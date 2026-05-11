@@ -1,0 +1,19 @@
+{
+  "name": "AISE 2026 Course",
+  "short_name": "AISE 2026",
+  "description": "The map of everything a 2026 AI Solutions Engineer or Architect needs to know.",
+  "start_url": "./course.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#08080A",
+  "theme_color": "#B4A0FF",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%23B4A0FF'/><text x='96' y='130' font-family='sans-serif' font-size='112' font-weight='700' text-anchor='middle' fill='%23080808'>A</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

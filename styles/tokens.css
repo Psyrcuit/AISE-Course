@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Cartograph design tokens.
+   Dark-first, warm-grey, monochrome with one accent. Vercel + Linear vibe.
+   Light mode is a deliberate inversion, not a separate brand.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Geist';
+  src: url('../fonts/Geist-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('../fonts/Geist-Italic-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('../fonts/GeistMono-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+:root {
+  /* Type stacks */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Type scale (fluid, pinned to the 8px grid) */
+  --fs-100: clamp(.74rem, .73rem + .04vw, .78rem);
+  --fs-200: clamp(.84rem, .82rem + .08vw, .88rem);
+  --fs-300: 1rem;
+  --fs-400: clamp(1.06rem, 1rem + .25vw, 1.18rem);
+  --fs-500: clamp(1.28rem, 1.18rem + .4vw, 1.48rem);
+  --fs-600: clamp(1.6rem, 1.4rem + .8vw, 2rem);
+  --fs-700: clamp(2rem, 1.7rem + 1.2vw, 2.6rem);
+  --fs-800: clamp(2.6rem, 2.1rem + 1.8vw, 3.4rem);
+
+  /* Surfaces (dark-first; light mode below overrides) */
+  --surface-0: #08080A;       /* page background */
+  --surface-1: #0E0E11;       /* canvas / cards default */
+  --surface-2: #15151A;       /* elevated cards */
+  --surface-3: #1D1D24;       /* highest tier */
+  --surface-4: #2A2A33;       /* borders / dividers stronger */
+  --surface-5: #3B3B47;
+
+  /* Text */
+  --text-1: #F4F4F5;          /* primary */
+  --text-2: #C5C5CD;          /* secondary */
+  --text-3: #93939D;          /* tertiary, captions */
+  --text-4: #6A6A74;          /* placeholders */
+  --text-5: #45454D;          /* near-disabled */
+
+  /* Borders */
+  --border-1: #1F1F26;
+  --border-2: #2C2C35;
+  --border-3: #3B3B47;
+
+  /* Single accent - violet 300 in dark, violet 700 in light */
+  --accent: #B4A0FF;
+  --accent-strong: #C4B5FD;
+  --accent-soft: #8B5CF6;
+  --accent-faint: rgba(180, 160, 255, .12);
+
+  /* Status (used sparingly) */
+  --success: #6EE7B7;
+  --warn: #FCD34D;
+  --danger: #FCA5A5;
+  --info: #93C5FD;
+
+  /* Geometry */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Spacing (8px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Layout */
+  --rail-w: 240px;
+  --right-w: 280px;
+  --topstrip-h: 44px;
+  --content-max: 760px;
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 2px var(--surface-0), 0 0 0 4px var(--accent);
+
+  /* Shadows (subtle) */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-2: 0 6px 24px rgba(0,0,0,.35);
+  --shadow-3: 0 18px 60px rgba(0,0,0,.5);
+
+  /* Motion */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --dur-fast: 120ms;
+  --dur-mid: 220ms;
+  --dur-slow: 420ms;
+
+  /* Module hue ramp (OKLCH; lightness fixed for visual consistency).
+     Used on the System Map and module hero strips, not on text. */
+  --hue-1: oklch(72% .14 25);    /* warm red */
+  --hue-2: oklch(72% .14 50);    /* orange */
+  --hue-3: oklch(72% .14 80);    /* amber */
+  --hue-4: oklch(72% .14 110);   /* lime */
+  --hue-5: oklch(72% .14 140);   /* green */
+  --hue-6: oklch(72% .14 170);   /* teal */
+  --hue-7: oklch(72% .14 200);   /* cyan */
+  --hue-8: oklch(72% .14 230);   /* sky */
+  --hue-9: oklch(72% .14 260);   /* indigo */
+  --hue-10: oklch(72% .14 290);  /* violet */
+  --hue-11: oklch(72% .14 320);  /* magenta */
+  --hue-12: oklch(72% .14 350);  /* pink */
+  --hue-13: oklch(72% .14 15);
+  --hue-14: oklch(72% .14 65);
+  --hue-15: oklch(72% .14 125);
+  --hue-16: oklch(72% .14 215);
+
+  color-scheme: dark;
+}
+
+/* Light mode: faithful inversion. */
+[data-theme="light"] {
+  --surface-0: #FFFFFF;
+  --surface-1: #FAFAFB;
+  --surface-2: #F4F4F6;
+  --surface-3: #ECECEF;
+  --surface-4: #DADAE1;
+  --surface-5: #BCBCC4;
+
+  --text-1: #0A0A0B;
+  --text-2: #2E2E36;
+  --text-3: #4F4F58;
+  --text-4: #6B6B73;
+  --text-5: #8C8C94;
+
+  --border-1: #ECECEF;
+  --border-2: #DADAE1;
+  --border-3: #BCBCC4;
+
+  --accent: #6D28D9;
+  --accent-strong: #5B21B6;
+  --accent-soft: #7C3AED;
+  --accent-faint: rgba(109, 40, 217, .08);
+
+  --success: #047857;
+  --warn: #B45309;
+  --danger: #B91C1C;
+  --info: #1D4ED8;
+
+  --shadow-1: 0 1px 2px rgba(20, 20, 30, .06);
+  --shadow-2: 0 8px 24px rgba(20, 20, 30, .08);
+  --shadow-3: 0 24px 60px rgba(20, 20, 30, .12);
+
+  color-scheme: light;
+}
+
+/* Cyberpunk: deep blue-black with cyan + magenta neon. AA-tested. */
+[data-theme="cyberpunk"] {
+  --surface-0: #050810;
+  --surface-1: #0A0F1C;
+  --surface-2: #111827;
+  --surface-3: #1C2233;
+  --surface-4: #2A3045;
+  --surface-5: #3F4761;
+
+  --text-1: #E0F8FF;
+  --text-2: #B5DAEA;
+  --text-3: #7BA8C0;
+  --text-4: #5C8094;
+  --text-5: #3F5567;
+
+  --border-1: #14223A;
+  --border-2: #233659;
+  --border-3: #38507A;
+
+  --accent: #22D3EE;            /* cyan */
+  --accent-strong: #67E8F9;
+  --accent-soft: #06B6D4;
+  --accent-faint: rgba(34, 211, 238, .14);
+
+  --success: #34D399;
+  --warn: #FBBF24;
+  --danger: #F472B6;             /* magenta */
+  --info: #818CF8;
+
+  color-scheme: dark;
+}
+
+/* Sepia: warm cream; reading-focused; lower screen fatigue. */
+[data-theme="sepia"] {
+  --surface-0: #F4ECDC;
+  --surface-1: #EFE6D2;
+  --surface-2: #E7DCC3;
+  --surface-3: #DBCEAE;
+  --surface-4: #C3B591;
+  --surface-5: #A99973;
+
+  --text-1: #2A1F12;
+  --text-2: #4A3A26;
+  --text-3: #6E5A40;
+  --text-4: #8C7757;
+  --text-5: #A8946F;
+
+  --border-1: #E1D6BC;
+  --border-2: #C8B894;
+  --border-3: #A99973;
+
+  --accent: #6E3A6F;             /* brown-violet */
+  --accent-strong: #5A2D5C;
+  --accent-soft: #84528A;
+  --accent-faint: rgba(110, 58, 111, .12);
+
+  --success: #4D6B2C;
+  --warn: #95571B;
+  --danger: #9B2D2D;
+  --info: #2C5378;
+
+  color-scheme: light;
+}
+
+/* High-contrast: pure black/white with violet; AAA-targeted contrast. */
+[data-theme="high-contrast"] {
+  --surface-0: #000000;
+  --surface-1: #0A0A0A;
+  --surface-2: #141414;
+  --surface-3: #1F1F1F;
+  --surface-4: #404040;
+  --surface-5: #707070;
+
+  --text-1: #FFFFFF;
+  --text-2: #F0F0F0;
+  --text-3: #D0D0D0;
+  --text-4: #A8A8A8;
+  --text-5: #808080;
+
+  --border-1: #2A2A2A;
+  --border-2: #4A4A4A;
+  --border-3: #707070;
+
+  --accent: #C7B6FF;             /* high-contrast violet on black */
+  --accent-strong: #DCD0FF;
+  --accent-soft: #A78BFA;
+  --accent-faint: rgba(199, 182, 255, .18);
+
+  --success: #86EFAC;
+  --warn: #FDE047;
+  --danger: #FCA5A5;
+  --info: #BAE6FD;
+
+  color-scheme: dark;
+}
+
+/* Module hue accessor: data-module="N" anywhere maps to --module-hue var */
+[data-module="1"]  { --module-hue: var(--hue-1); }
+[data-module="2"]  { --module-hue: var(--hue-2); }
+[data-module="3"]  { --module-hue: var(--hue-3); }
+[data-module="4"]  { --module-hue: var(--hue-4); }
+[data-module="5"]  { --module-hue: var(--hue-5); }
+[data-module="6"]  { --module-hue: var(--hue-6); }
+[data-module="7"]  { --module-hue: var(--hue-7); }
+[data-module="8"]  { --module-hue: var(--hue-8); }
+[data-module="9"]  { --module-hue: var(--hue-9); }
+[data-module="10"] { --module-hue: var(--hue-10); }
+[data-module="11"] { --module-hue: var(--hue-11); }
+[data-module="12"] { --module-hue: var(--hue-12); }
+[data-module="13"] { --module-hue: var(--hue-13); }
+[data-module="14"] { --module-hue: var(--hue-14); }
+[data-module="15"] { --module-hue: var(--hue-15); }
+[data-module="16"] { --module-hue: var(--hue-16); }
