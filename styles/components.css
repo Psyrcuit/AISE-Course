@@ -273,6 +273,12 @@
   border-radius: 3px;
   margin: 0 2px;
 }
+@media (max-width: 767px) {
+  /* The keyboard hints in the cmdk footer aren't useful on touch
+     devices and the two-column layout breaks awkwardly at narrow
+     widths. Hide the footer on mobile — users tap a row to navigate. */
+  .cmd-foot { display: none; }
+}
 
 /* ----- Toasts ----- */
 #toasts {

@@ -177,6 +177,29 @@
   flex-wrap: wrap;
   min-width: 0;
 }
+@media (max-width: 767px) {
+  /* On mobile, the topstrip is tight. Only show the current page (last
+     crumb) and hide the trail — the back-arrow on the rail handles
+     parent navigation. Truncate with ellipsis as a final safety net. */
+  .crumbs {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  /* Hide every crumb except the last. The separator slashes are
+     siblings of the crumb spans; hide them too. */
+  .crumbs > *:not(:last-child) { display: none; }
+  .crumbs > *:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    font-weight: 600;
+    color: var(--text-1);
+  }
+}
 .crumbs a {
   color: var(--text-3);
   text-decoration: none;
@@ -336,6 +359,41 @@
     height: calc(64px + env(safe-area-inset-bottom, 0));
   }
   main#main-region { padding-bottom: 80px; }
+
+  /* WCAG 2.5.5 — minimum 44×44 px touch targets on mobile. The desktop
+     sizes are visual; mobile needs more meat to tap reliably. */
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+  }
+  /* Shrink the search "Search ⌘K" pill to an icon-only button on mobile.
+     The keyboard hint isn't useful without a keyboard, and the saved
+     space lets the breadcrumb breathe. The aria-label still announces
+     "Open command palette". */
+  .cmd-trigger {
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 8px;
+    background: transparent;
+    border-color: transparent;
+  }
+  .cmd-trigger > span:not(.ico),
+  .cmd-trigger .kbd {
+    display: none;
+  }
+  .cmd-trigger .ico {
+    font-size: 18px;
+    line-height: 1;
+  }
+  /* Rail link rows when the drawer is open should also clear 44px. */
+  .rail-link {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
 }
 .bottom-tab {
   display: flex;

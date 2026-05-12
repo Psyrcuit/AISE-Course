@@ -1022,8 +1022,25 @@
   border-radius: var(--radius-3);
   overflow-x: auto;
   scrollbar-width: none;
+  /* Hint at scrollability via a fade-out gradient on the right edge so
+     users know to swipe. The fade collapses once they scroll past the
+     rightmost tab. */
+  -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, black 90%, transparent 100%);
 }
 .settings-tablist::-webkit-scrollbar { display: none; }
+@media (max-width: 767px) {
+  /* Compress tab padding + font on mobile so all 5 tabs fit on one line
+     when possible (eliminates the cut-off "About" tab). */
+  .settings-tablist {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .settings-tab {
+    font-size: var(--fs-100);
+    padding: 8px 10px !important;
+  }
+}
 .settings-tab {
   appearance: none;
   background: transparent;

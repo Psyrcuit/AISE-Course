@@ -93,6 +93,11 @@ code, kbd, pre, samp {
   border: 1px solid var(--border-1);
   border-radius: 4px;
   color: var(--text-1);
+  /* Long slug-style identifiers (top-lab-medians-levels-fyi-may-2026)
+     must be allowed to wrap on narrow screens or they push the row
+     past the viewport. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 pre {
   font-size: .88rem;

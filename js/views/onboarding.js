@@ -217,8 +217,12 @@ function renderPlacement(state, finish, back) {
 // ---------- helpers ----------
 function _card() { return el('section', { class: 'onboarding', 'aria-live': 'polite' }); }
 function _progress(active, total) {
+  // `total` is the number of dots to render. `active` is the 0-indexed
+  // current step (so total=4 + active=0 lights the first of four dots).
+  // The previous loop ran `i <= total` and so always rendered one extra
+  // dot ("Step 1 of 4" showed 5 dots).
   const w = el('div', { class: 'onboarding-progress' });
-  for (let i = 0; i <= total; i++) {
+  for (let i = 0; i < total; i++) {
     w.appendChild(el('div', { class: 'onboarding-progress-dot' + (i <= active ? ' is-active' : '') }));
   }
   return w;
