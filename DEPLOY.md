@@ -1,11 +1,11 @@
-# Production deploy: psyrcuit.com/course
+# Production deploy: aise.psyrcuit.com
 
-Single-file-style static SPA with an ES module entry. No build step. Upload the listed files exactly as they are; serve over HTTPS with `index.html` mapped to `course.html` (or rename it).
+Single-file-style static SPA with an ES module entry. No build step. Cloudflare Pages connected to `github.com/Psyrcuit/AISE-Course`; every push to `main` deploys.
 
 ## What to upload
 
 ```
-psyrcuit.com/course/
+aise.psyrcuit.com/
 ├── course.html              # entry point (12 KB)
 ├── manifest.webmanifest     # PWA install manifest
 ├── service-worker.js        # offline shell + caching
@@ -53,9 +53,19 @@ psyrcuit.com/course/
 | No-cache on `course.html` + `service-worker.js` | These two pull fresh content |
 | Optional gzip / Brotli | ~3-4× reduction on JS/CSS |
 
-## Optional: subpath deploy at /course
+## Cloudflare Pages setup (current)
 
-If `course.html` becomes the index of `/course/`, everything just works because all asset paths in `course.html` are relative (`./js/app.js`, `./styles/*.css`). Hash-based routing (`#/path`, `#/concept/...`) is server-agnostic — no rewrite rules needed.
+- Repo: `github.com/Psyrcuit/AISE-Course`
+- Pages project: `aise-course`
+- Branch: `main` (auto-deploys on push)
+- Build command: *empty* (no build step)
+- Build output directory: `/`
+- Custom domain: `aise.psyrcuit.com` (CNAME auto-managed by Cloudflare)
+- Auto-serves `course.html` at the domain root.
+
+## Asset paths
+
+All asset paths in `course.html` are relative (`./js/app.js`, `./styles/*.css`), so the same files work from `file://`, any subdomain, or any subpath. Hash-based routing (`#/path`, `#/concept/...`) is server-agnostic — no rewrite rules needed.
 
 ## Service worker scope
 
@@ -66,7 +76,7 @@ If `course.html` becomes the index of `/course/`, everything just works because 
 
 ## Smoke test on production
 
-After upload, open `https://psyrcuit.com/course` in an incognito window and verify:
+After deploy, open `https://aise.psyrcuit.com` in an incognito window and verify:
 
 1. Reveal cinematic plays, "Enter" routes to `#/onboarding` (or `#/` if already seen).
 2. Cmd/Ctrl+K opens the command palette.

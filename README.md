@@ -2,7 +2,7 @@
 
 The map of everything a 2026 AI Solutions Engineer or Architect needs to know. 16 modules, 514 concepts, an interactive force-directed system map, gamified, offline-ready.
 
-**Live:** [psyrcuit.com/course](https://psyrcuit.com/course)
+**Live:** [aise.psyrcuit.com](https://aise.psyrcuit.com)
 
 ## What it is
 
