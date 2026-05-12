@@ -39,16 +39,14 @@
   color: var(--text-1);
 }
 .rail-brand-mark {
-  width: 24px; height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-  color: var(--surface-0);
-  font-weight: 700;
-  font-size: 12px;
-  font-family: var(--font-mono);
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  flex-shrink: 0;
+  /* The logo SVG already has a violet circular background built in, so
+     no extra gradient/border is needed; rendering it raw keeps the
+     brand identical across the app, the OG image, the favicon, and the
+     home-screen icon. */
 }
 .rail-brand-text {
   font-weight: 650;

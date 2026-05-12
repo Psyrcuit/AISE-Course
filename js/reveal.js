@@ -36,6 +36,7 @@ function showReveal() {
     ${reduceMotion ? '' : '<canvas id="reveal-canvas" aria-hidden="true"></canvas>'}
     <div id="reveal-foreground">
       <div id="reveal-content">
+        <img class="reveal-logo" src="favicon.svg" alt="" width="72" height="72">
         <div class="reveal-eyebrow"><span class="reveal-eyebrow-line">AI Solutions Engineer</span> <span class="reveal-eyebrow-line">/ Architect 2026</span></div>
         <h1 class="reveal-title">514 concepts.<br>16 modules.<br>One map.</h1>
         <p class="reveal-tagline">Built for the engineers shipping AI in 2026. Browse on a map. Learn on demand. Leave with a playbook.</p>

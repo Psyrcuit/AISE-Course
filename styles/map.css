@@ -356,6 +356,18 @@
   border: 1px solid color-mix(in oklch, #45454F 60%, transparent);
   box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.6);
 }
+.reveal-logo {
+  display: block;
+  margin: 0 auto 18px;
+  width: 72px;
+  height: 72px;
+  /* Subtle glow so the logo doesn't sit flat against the dark canvas. */
+  filter: drop-shadow(0 0 24px rgba(180, 160, 255, 0.35));
+  animation: fade-up var(--dur-slow) var(--ease-out) 50ms both;
+}
+@media (max-width: 420px) {
+  .reveal-logo { width: 56px; height: 56px; }
+}
 .reveal-eyebrow {
   font-family: var(--font-mono);
   font-size: var(--fs-200);

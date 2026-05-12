@@ -1,7 +1,7 @@
 // Minimal service worker: cache-first for app shell, network-first for everything else.
 // On version bump (CACHE_NAME), all old caches are purged on activate.
 
-const CACHE_NAME = 'aise26-v12';
+const CACHE_NAME = 'aise26-v13';
 const SHELL = [
   './index.html',
   './styles/tokens.css',
@@ -15,7 +15,11 @@ const SHELL = [
   './js/app.js',
   './js/runtime.js',
   './vendor/force-graph.min.js',
-  './manifest.webmanifest'
+  './manifest.webmanifest',
+  './favicon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
