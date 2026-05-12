@@ -9,7 +9,14 @@
   left: var(--rail-w);
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, #0E0E14 0%, #050507 100%);
+  /* Theme-aware backdrop. In dark mode this resolves to a deep blue-black
+     radial; in light mode it becomes a soft warm-white radial so the
+     filter pills and search box render with proper contrast. */
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in oklch, var(--surface-0) 92%, transparent) 0%,
+    var(--surface-0) 100%
+  );
   overflow: hidden;
 }
 @media (max-width: 960px) {
@@ -45,7 +52,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: rgba(15, 15, 20, .85);
+  background: color-mix(in oklch, var(--surface-1) 85%, transparent);
   border: 1px solid var(--border-2);
   border-radius: 8px;
   backdrop-filter: blur(8px);
@@ -66,7 +73,7 @@
 
 .map-filter-chip {
   padding: 6px 12px;
-  background: rgba(15, 15, 20, .85);
+  background: color-mix(in oklch, var(--surface-1) 85%, transparent);
   border: 1px solid var(--border-2);
   border-radius: 999px;
   color: var(--text-2);
@@ -78,7 +85,7 @@
   align-items: center;
   gap: 6px;
 }
-.map-filter-chip:hover { background: rgba(20, 20, 25, .9); border-color: var(--border-3); }
+.map-filter-chip:hover { background: var(--surface-2); border-color: var(--border-3); }
 .map-filter-chip[aria-pressed="true"] {
   background: var(--accent-faint);
   color: var(--accent);
@@ -92,7 +99,7 @@
 
 .map-module-select {
   padding: 6px 28px 6px 12px;
-  background: rgba(15, 15, 20, .85);
+  background: color-mix(in oklch, var(--surface-1) 85%, transparent);
   border: 1px solid var(--border-2);
   border-radius: 999px;
   color: var(--text-2);
@@ -111,7 +118,7 @@
 /* Hover card */
 .map-hover-card {
   position: absolute;
-  background: rgba(20, 20, 25, .96);
+  background: color-mix(in oklch, var(--surface-2) 96%, transparent);
   border: 1px solid var(--border-3);
   border-radius: var(--radius-md);
   padding: 12px 14px;
@@ -137,7 +144,7 @@
   right: 18px;
   width: 200px;
   height: 140px;
-  background: rgba(15, 15, 20, .9);
+  background: color-mix(in oklch, var(--surface-1) 90%, transparent);
   border: 1px solid var(--border-2);
   border-radius: 6px;
   overflow: hidden;
@@ -152,7 +159,7 @@
   bottom: 18px;
   left: 18px;
   padding: 12px 14px;
-  background: rgba(15, 15, 20, .9);
+  background: color-mix(in oklch, var(--surface-1) 90%, transparent);
   border: 1px solid var(--border-2);
   border-radius: 6px;
   font-family: var(--font-mono);
@@ -211,7 +218,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 14px;
-  background: rgba(15, 15, 20, .9);
+  background: color-mix(in oklch, var(--surface-1) 90%, transparent);
   border: 1px solid var(--border-2);
   border-radius: 999px;
   font-family: var(--font-mono);

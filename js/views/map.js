@@ -214,19 +214,28 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
     });
   }
 
+  // Resolve theme-aware colors so the canvas adapts to light/dark.
+  const rootStyle = getComputedStyle(document.documentElement);
+  const surface0 = (rootStyle.getPropertyValue('--surface-0') || '#0A0A0C').trim();
+  const text1 = (rootStyle.getPropertyValue('--text-1') || '#F4F4F5').trim();
+  const isLight = document.documentElement.dataset.theme === 'light';
+  const linkColor = isLight ? 'rgba(80, 80, 110, 0.28)' : 'rgba(180, 180, 220, 0.32)';
+  const stubColor = isLight ? 'rgba(60, 60, 80, 0.55)' : 'rgba(180, 180, 200, 0.6)';
+  const highlightColor = isLight ? '#0A0A0B' : '#FFFFFF';
+
   const Graph = window.ForceGraph()(canvasWrap)
     .graphData(data)
-    .backgroundColor('#0A0A0C')
+    .backgroundColor(surface0)
     .nodeRelSize(5)
     .nodeVal(n => n.val)
-    .linkColor(() => 'rgba(180, 180, 220, 0.32)')
+    .linkColor(() => linkColor)
     .linkWidth(1)
     .linkDirectionalParticles(0)
     .nodeColor(n => {
-      if (_highlightedSlug === n.id) return '#FFFFFF';
+      if (_highlightedSlug === n.id) return highlightColor;
       if (n.complete) return '#B4A0FF';
-      if (n.fleshed) return MODULE_HUES[n.module] || '#cccccc';
-      return 'rgba(180, 180, 200, 0.6)';
+      if (n.fleshed) return MODULE_HUES[n.module] || (isLight ? '#666' : '#cccccc');
+      return stubColor;
     })
     .nodeCanvasObjectMode(n => (Graph.zoom() > 1.4 || _highlightedSlug === n.id) ? 'after' : undefined)
     .nodeCanvasObject((n, ctx, globalScale) => {
@@ -237,7 +246,9 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
       ctx.font = `${fontSize}px Geist, system-ui, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillStyle = _highlightedSlug === n.id ? '#FFFFFF' : 'rgba(244, 244, 245, 0.85)';
+      const labelHighlight = isLight ? '#0A0A0B' : '#FFFFFF';
+      const labelDefault = isLight ? 'rgba(20, 20, 30, 0.85)' : 'rgba(244, 244, 245, 0.85)';
+      ctx.fillStyle = _highlightedSlug === n.id ? labelHighlight : labelDefault;
       ctx.fillText(label, n.x, n.y + 8 / globalScale);
     })
     .onNodeHover(n => {
