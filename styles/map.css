@@ -243,23 +243,14 @@
   font-size: 10px;
 }
 
-/* On mobile, push the bottom-anchored UI (legend / help / mini-map) up
-   above the fixed bottom-tab navigation (64px + safe-area inset) so it
-   doesn't get clipped or covered. */
+/* On mobile, the legend was removed in favor of the intuitive dot
+   coloring, and the help text (keyboard shortcuts) is hidden because
+   touch users navigate by gesture. The mini-map only renders on
+   desktop today, but if it ever shows on mobile push it above the
+   bottom-tab nav. */
 @media (max-width: 767px) {
-  .map-legend,
-  .map-mini {
-    bottom: calc(80px + env(safe-area-inset-bottom, 0));
-  }
-  .map-help {
-    bottom: calc(80px + env(safe-area-inset-bottom, 0));
-    /* Drop down to legend's left edge on narrow screens so the two
-       elements stack vertically instead of overlapping horizontally. */
-    left: 18px;
-    right: auto;
-    transform: none;
-    bottom: calc(132px + env(safe-area-inset-bottom, 0));
-  }
+  .map-help { display: none; }
+  .map-mini { bottom: calc(80px + env(safe-area-inset-bottom, 0)); }
 }
 
 /* ==========================================================================

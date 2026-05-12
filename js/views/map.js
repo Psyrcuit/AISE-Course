@@ -96,14 +96,10 @@ export function renderSystemMap(rawHash) {
   const hoverCard = el('div', { class: 'map-hover-card', id: 'map-hover-card' });
   wrap.appendChild(hoverCard);
 
-  // Legend
-  const legend = el('div', { class: 'map-legend' }, [
-    el('div', { class: 'row' }, [el('div', { class: 'swatch', style: 'background: oklch(72% .14 200)' }), 'Module hue']),
-    el('div', { class: 'row' }, [el('div', { class: 'swatch', style: 'background: var(--accent)' }), 'Completed'])
-  ]);
-  wrap.appendChild(legend);
-
-  // Help
+  // Help (desktop-only via CSS). The dot colors are intuitive enough
+  // that the explicit legend was just chrome — removed entirely. The
+  // help text stays on desktop so first-time visitors learn the
+  // keyboard shortcuts; mobile users navigate by touch so we hide it.
   const help = el('div', { class: 'map-help' }, [
     'Drag to pan · scroll to zoom · click for details · ',
     el('kbd', null, '←→↑↓'),
@@ -187,23 +183,23 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
     a11y.appendChild(li);
   });
 
-  // Build cluster centers on a Fibonacci spiral. Module 1 sits closest to
-  // the origin and each subsequent module is placed at the next golden-
-  // angle step with radius √i scaling. The result is a continuous spiral
-  // disc rather than a grid of disconnected pods, so the cross-reference
-  // graph reads as one coherent system instead of 16 isolated cells.
+  // Build cluster centers as a pinwheel: all 16 modules evenly spaced on
+  // a single ring with the foundational module at 12 o'clock and the
+  // remaining modules walking clockwise. The radial symmetry reads as
+  // "structured" at a glance, every module's color is clearly its own
+  // segment, and the center of the wheel becomes negative space where
+  // cross-reference edges flow visibly between modules. Much more
+  // legible than a 4×4 grid OR a Fibonacci spiral.
   const centers = new Map();
-  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));   // ~137.5°
-  const RADIUS_STEP = 130;
-  for (let i = 0; i < MODULES.length; i++) {
+  const RADIUS = 360;
+  const N = MODULES.length;
+  for (let i = 0; i < N; i++) {
     const m = MODULES[i];
-    // Use (i + 0.5) so module 1 doesn't sit exactly at the origin.
-    const t = i + 0.5;
-    const angle = t * GOLDEN_ANGLE;
-    const radius = RADIUS_STEP * Math.sqrt(t);
+    // -π/2 puts module 1 at the top (12 o'clock). Walks clockwise.
+    const angle = (i / N) * Math.PI * 2 - Math.PI / 2;
     centers.set(m.n, {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius
+      x: Math.cos(angle) * RADIUS,
+      y: Math.sin(angle) * RADIUS
     });
   }
 
@@ -263,20 +259,20 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
       closeSheet(sheet);
     });
 
-  // Cluster forces: pull nodes toward their module's spiral anchor.
-  // The strength is intentionally gentle (0.06 vs the previous 0.12) so
-  // cross-reference links can pull related concepts across module
-  // boundaries, producing the "spiral disc with flowing edges" look.
+  // Cluster forces: strong pull so each module stays a tight lobe on
+  // the wheel and the 16 colored sectors stay visually distinct. Cross-
+  // reference edges then read as clean inter-module connections through
+  // the center of the wheel.
   Graph.d3Force('cluster', alpha => {
     for (const n of data.nodes) {
       const c = centers.get(n.module);
       if (!c) continue;
-      n.vx += (c.x - n.x) * alpha * 0.06;
-      n.vy += (c.y - n.y) * alpha * 0.06;
+      n.vx += (c.x - n.x) * alpha * 0.18;
+      n.vy += (c.y - n.y) * alpha * 0.18;
     }
   });
-  Graph.d3Force('charge').strength(-40);
-  if (Graph.d3Force('link')) Graph.d3Force('link').distance(36).strength(0.18);
+  Graph.d3Force('charge').strength(-30);
+  if (Graph.d3Force('link')) Graph.d3Force('link').distance(50).strength(0.05);
 
   _graphInstance = Graph;
 
