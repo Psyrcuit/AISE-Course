@@ -38,8 +38,7 @@ export function renderConceptPage(slug) {
   // Meta pills
   wrap.appendChild(el('div', { class: 'concept-meta' }, [
     el('span', { class: 'pill pill-mod' }, 'Module ' + c.module),
-    c.subsection ? el('span', { class: 'pill' }, c.subsection) : null,
-    el('span', { class: 'pill ' + (c.fleshed ? 'pill-fleshed' : 'pill-stub') }, c.fleshed ? 'Fleshed' : 'Stub')
+    c.subsection ? el('span', { class: 'pill' }, c.subsection) : null
   ]));
 
   // Definition

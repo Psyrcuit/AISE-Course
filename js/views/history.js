@@ -84,8 +84,7 @@ export function renderHistory() {
           el('p', { class: 'stub', style: 'color: var(--text-3); font-size: var(--fs-100);' },
             'M' + c.module + (time ? ' · ' + time : '')
           )
-        ]),
-        el('span', { class: 'pill ' + (c.fleshed ? 'pill-fleshed' : 'pill-stub') }, c.fleshed ? 'Fleshed' : 'Stub')
+        ])
       ]));
     }
     sec.appendChild(list);

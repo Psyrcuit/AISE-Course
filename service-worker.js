@@ -1,7 +1,7 @@
 // Minimal service worker: cache-first for app shell, network-first for everything else.
 // On version bump (CACHE_NAME), all old caches are purged on activate.
 
-const CACHE_NAME = 'aise26-v10';
+const CACHE_NAME = 'aise26-v11';
 const SHELL = [
   './index.html',
   './styles/tokens.css',

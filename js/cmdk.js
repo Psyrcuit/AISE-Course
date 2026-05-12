@@ -150,7 +150,7 @@ function renderResults(query) {
     const out = searchConcepts(q);
     const conceptHits = out.results.slice(0, 10).map(r => ({
       label: r.name,
-      meta: 'M' + r.module + (r.fleshed ? ' · fleshed' : ''),
+      meta: 'M' + r.module,
       href: '#/concept/' + r.slug,
       kind: 'concept',
       tokens: out.tokens

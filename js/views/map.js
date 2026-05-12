@@ -16,7 +16,7 @@ const MODULE_HUES = [
   'oklch(72% .14 15)',  'oklch(72% .14 65)', 'oklch(72% .14 125)', 'oklch(72% .14 215)'
 ];
 
-let _filter = { fleshedOnly: false, completed: false, saved: false, module: null, search: '' };
+let _filter = { completed: false, saved: false, module: null, search: '' };
 let _graphInstance = null;
 let _highlightedSlug = null;
 
@@ -49,18 +49,6 @@ export function renderSystemMap(rawHash) {
   hud.appendChild(searchBox);
 
   // Filter chips
-  const fleshedChip = el('button', {
-    class: 'map-filter-chip',
-    type: 'button',
-    'aria-pressed': String(_filter.fleshedOnly)
-  }, ['Fleshed only ', el('span', { class: 'count' }, '(' + CONCEPTS.filter(c => c.fleshed).length + ')')]);
-  fleshedChip.addEventListener('click', () => {
-    _filter.fleshedOnly = !_filter.fleshedOnly;
-    fleshedChip.setAttribute('aria-pressed', String(_filter.fleshedOnly));
-    refreshFilters();
-  });
-  hud.appendChild(fleshedChip);
-
   const completedChip = el('button', {
     class: 'map-filter-chip',
     type: 'button',
@@ -111,8 +99,7 @@ export function renderSystemMap(rawHash) {
   // Legend
   const legend = el('div', { class: 'map-legend' }, [
     el('div', { class: 'row' }, [el('div', { class: 'swatch', style: 'background: oklch(72% .14 200)' }), 'Module hue']),
-    el('div', { class: 'row' }, [el('div', { class: 'swatch', style: 'background: var(--accent)' }), 'Completed']),
-    el('div', { class: 'row' }, [el('div', { class: 'swatch', style: 'background: var(--text-3)' }), 'Stub'])
+    el('div', { class: 'row' }, [el('div', { class: 'swatch', style: 'background: var(--accent)' }), 'Completed'])
   ]);
   wrap.appendChild(legend);
 
@@ -200,17 +187,23 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
     a11y.appendChild(li);
   });
 
-  // Build cluster centers in a 4x4 grid (closer to a "system landscape").
+  // Build cluster centers on a Fibonacci spiral. Module 1 sits closest to
+  // the origin and each subsequent module is placed at the next golden-
+  // angle step with radius √i scaling. The result is a continuous spiral
+  // disc rather than a grid of disconnected pods, so the cross-reference
+  // graph reads as one coherent system instead of 16 isolated cells.
   const centers = new Map();
-  const COLS = 4;
-  const SPACING = 360;
+  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));   // ~137.5°
+  const RADIUS_STEP = 130;
   for (let i = 0; i < MODULES.length; i++) {
     const m = MODULES[i];
-    const col = i % COLS;
-    const row = Math.floor(i / COLS);
+    // Use (i + 0.5) so module 1 doesn't sit exactly at the origin.
+    const t = i + 0.5;
+    const angle = t * GOLDEN_ANGLE;
+    const radius = RADIUS_STEP * Math.sqrt(t);
     centers.set(m.n, {
-      x: (col - (COLS - 1) / 2) * SPACING,
-      y: (row - (Math.ceil(MODULES.length / COLS) - 1) / 2) * SPACING
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
     });
   }
 
@@ -234,8 +227,7 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
     .nodeColor(n => {
       if (_highlightedSlug === n.id) return highlightColor;
       if (n.complete) return '#B4A0FF';
-      if (n.fleshed) return MODULE_HUES[n.module] || (isLight ? '#666' : '#cccccc');
-      return stubColor;
+      return MODULE_HUES[n.module] || (isLight ? '#666' : '#cccccc');
     })
     .nodeCanvasObjectMode(n => (Graph.zoom() > 1.4 || _highlightedSlug === n.id) ? 'after' : undefined)
     .nodeCanvasObject((n, ctx, globalScale) => {
@@ -271,17 +263,20 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
       closeSheet(sheet);
     });
 
-  // Cluster forces: pull nodes toward their module's grid cell.
+  // Cluster forces: pull nodes toward their module's spiral anchor.
+  // The strength is intentionally gentle (0.06 vs the previous 0.12) so
+  // cross-reference links can pull related concepts across module
+  // boundaries, producing the "spiral disc with flowing edges" look.
   Graph.d3Force('cluster', alpha => {
     for (const n of data.nodes) {
       const c = centers.get(n.module);
       if (!c) continue;
-      n.vx += (c.x - n.x) * alpha * 0.12;
-      n.vy += (c.y - n.y) * alpha * 0.12;
+      n.vx += (c.x - n.x) * alpha * 0.06;
+      n.vy += (c.y - n.y) * alpha * 0.06;
     }
   });
-  Graph.d3Force('charge').strength(-60);
-  if (Graph.d3Force('link')) Graph.d3Force('link').distance(28).strength(0.3);
+  Graph.d3Force('charge').strength(-40);
+  if (Graph.d3Force('link')) Graph.d3Force('link').distance(36).strength(0.18);
 
   _graphInstance = Graph;
 
@@ -311,7 +306,6 @@ function initGraph(canvasWrap, hoverCard, sheet, a11y, focusSlug) {
     const q = _filter.search;
     const filtered = {
       nodes: data.nodes.filter(n => {
-        if (_filter.fleshedOnly && !n.fleshed) return false;
         if (_filter.completed && !n.complete) return false;
         if (_filter.saved && !n.saved) return false;
         if (_filter.module && n.module !== _filter.module) return false;
@@ -382,8 +376,7 @@ function showHover(n, card) {
   const name = el('div', { class: 'name' }, n.name);
   const stub = el('div', { class: 'stub' }, n.stub);
   const pills = el('div', { class: 'pills' }, [
-    el('span', { class: 'pill pill-mod', 'data-module': String(n.module) }, 'M' + n.module),
-    el('span', { class: 'pill ' + (n.fleshed ? 'pill-fleshed' : 'pill-stub') }, n.fleshed ? 'Fleshed' : 'Stub')
+    el('span', { class: 'pill pill-mod', 'data-module': String(n.module) }, 'M' + n.module)
   ]);
   card.appendChild(name); card.appendChild(stub); card.appendChild(pills);
 }
@@ -417,6 +410,10 @@ function openSheet(n, sheet) {
     el('a', { class: 'btn btn-primary', href: '#/concept/' + n.id }, 'Open full page →'),
     el('a', { class: 'btn', href: '#/module/' + n.module }, 'Module')
   ]));
+  // The body was being built but never appended - the sheet only showed
+  // the head bar with "Module N ✕" and nothing else. Append + linkify
+  // after the node is in the DOM so cross-ref text is properly wired.
+  sheet.appendChild(body);
   sheet.setAttribute('data-open', 'true');
   linkifyText(body, { skipSlug: n.id });
 }

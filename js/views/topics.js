@@ -119,8 +119,7 @@ export function renderTopic(id) {
         el('div', null, [
           el('p', { class: 'name' }, c.name),
           el('p', { class: 'stub' }, c.stub)
-        ]),
-        el('span', { class: 'pill ' + (c.fleshed ? 'pill-fleshed' : 'pill-stub') }, c.fleshed ? 'Fleshed' : 'Stub')
+        ])
       ]));
     }
     sec.appendChild(list);
