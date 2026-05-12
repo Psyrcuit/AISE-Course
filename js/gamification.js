@@ -107,7 +107,6 @@ export function buildAchievementState() {
   const konamiUnlocked = eggsUnlocked.includes('konami');
   const voiceUsed = lsGet('voice_used', false);
   const readerOpened = lsGet('reader_opened', false);
-  const map3dOpened = lsGet('map3d_opened', false);
   return {
     completedCount,
     totalConcepts: CONCEPTS.length,
@@ -130,8 +129,7 @@ export function buildAchievementState() {
     apiKeySet,
     konamiUnlocked,
     voiceUsed,
-    readerOpened,
-    map3dOpened
+    readerOpened
   };
 }
 

@@ -107,7 +107,6 @@ function renderResults(query) {
   // Quick actions
   const actions = [
     { label: 'Open System Map', meta: 'navigate', href: '#/map' },
-    { label: 'Open System Map (3D)', meta: 'navigate', href: '#/map3d' },
     { label: 'Path (skill tree)', meta: 'navigate', href: '#/path' },
     { label: 'Topics (tag cloud)', meta: 'navigate', href: '#/topics' },
     { label: 'History (last 50 concepts)', meta: 'navigate', href: '#/history' },

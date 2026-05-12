@@ -33,7 +33,6 @@ import { renderDecisions, renderDecisionDetail } from './views/decision.js';
 import { renderCapstone } from './views/capstone.js';
 import { renderLibrary } from './views/library.js';
 import { renderSystemMap } from './views/map.js';
-import { renderMap3D } from './views/map3d.js';
 import { renderSettings } from './views/settings.js';
 import { renderOnboarding } from './views/onboarding.js';
 import { renderPath } from './views/path.js';
@@ -57,7 +56,6 @@ import { renderCareer } from './views/career.js';
 
 // ---- Register routes ----
 registerRoute(/^#?\/?$/, () => renderHome());
-registerRoute(/^#\/map3d(?:\?.*)?$/, () => renderMap3D());
 registerRoute(/^#\/map(?:\?.*)?$/, (params) => renderSystemMap(params));
 registerRoute(/^#\/modules\/?$/, () => renderModulesIndex());
 registerRoute(/^#\/module\/(\d+)\/quiz\/?$/, (n) => renderModuleQuiz(n));

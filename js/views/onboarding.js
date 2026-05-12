@@ -76,7 +76,7 @@ function renderWelcome(state, advance, finish) {
   const card = _card();
   card.appendChild(_progress(0, 4));
   card.appendChild(el('div', { class: 'onboarding-step-num' }, 'Step 1 of 4'));
-  card.appendChild(el('h2', null, 'Welcome to Cartograph.'));
+  card.appendChild(el('h2', null, 'Welcome to AISE 26.'));
   card.appendChild(el('p', null, 'The 2026 AI Solutions Engineer\'s atlas. 514 concepts across 16 modules. Built for daily practice.'));
   card.appendChild(el('p', null, 'Two minutes of setup so the home page knows what to put in front of you. Skip any step.'));
   const actions = el('div', { class: 'onboarding-actions' });

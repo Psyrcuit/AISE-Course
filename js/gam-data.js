@@ -64,8 +64,7 @@ export const ACHIEVEMENTS_REGISTRY = [
       { id: 'goal_setter',        name: 'Goal Setter',        desc: 'Complete onboarding wizard with a profile goal.',        bonusXP: 25,  cond: s => s.profileGoalSet === true },
       { id: 'speedrun_kanji',     name: 'Speedrun Kanji',     desc: 'Trigger the Konami code.',                               bonusXP: 50,  cond: s => s.konamiUnlocked === true },
       { id: 'voice_explorer',     name: 'Voice Explorer',     desc: 'Try the voice-search button.',                           bonusXP: 25,  cond: s => s.voiceUsed === true },
-      { id: 'reader',             name: 'Reader',             desc: 'Open Reading mode.',                                     bonusXP: 25,  cond: s => s.readerOpened === true },
-      { id: 'cartographer',       name: 'Cartographer',       desc: 'Open the 3D System Map.',                                bonusXP: 25,  cond: s => s.map3dOpened === true }
+      { id: 'reader',             name: 'Reader',             desc: 'Open Reading mode.',                                     bonusXP: 25,  cond: s => s.readerOpened === true }
     ];
 
 export const CAPSTONES = {

@@ -98,13 +98,6 @@ export function renderSystemMap(rawHash) {
   });
   hud.appendChild(modSelect);
 
-  // 3D mode toggle
-  const view3d = el('a', { class: 'btn btn-sm btn-ghost map-3d-toggle', href: '#/map3d', 'aria-label': 'Switch to 3D map' }, [
-    el('span', { 'aria-hidden': 'true' }, '◊ '),
-    '3D'
-  ]);
-  hud.appendChild(view3d);
-
   wrap.appendChild(hud);
 
   // Canvas wrapper
