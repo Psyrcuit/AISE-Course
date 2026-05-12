@@ -2,7 +2,7 @@
   "name": "AISE 2026 Course",
   "short_name": "AISE 2026",
   "description": "The map of everything a 2026 AI Solutions Engineer or Architect needs to know.",
-  "start_url": "./course.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

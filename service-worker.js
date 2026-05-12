@@ -1,9 +1,9 @@
 // Minimal service worker: cache-first for app shell, network-first for everything else.
 // On version bump (CACHE_NAME), all old caches are purged on activate.
 
-const CACHE_NAME = 'aise26-v3';
+const CACHE_NAME = 'aise26-v4';
 const SHELL = [
-  './course.html',
+  './index.html',
   './styles/tokens.css',
   './styles/base.css',
   './styles/layout.css',
@@ -51,7 +51,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then(c => c.put(req, clone));
         }
         return res;
-      }).catch(() => caches.match('./course.html')))
+      }).catch(() => caches.match('./index.html')))
     );
     return;
   }
@@ -63,7 +63,7 @@ self.addEventListener('fetch', (event) => {
         const clone = res.clone();
         caches.open(CACHE_NAME).then(c => c.put(req, clone));
         return res;
-      }).catch(() => caches.match(req).then(hit => hit || caches.match('./course.html')))
+      }).catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
     );
   }
 });

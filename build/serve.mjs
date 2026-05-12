@@ -28,7 +28,7 @@ const server = createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost');
     let pathname = decodeURIComponent(url.pathname);
-    if (pathname === '/' || pathname === '') pathname = '/course.html';
+    if (pathname === '/' || pathname === '') pathname = '/index.html';
     const filePath = normalize(join(ROOT, pathname));
     if (!filePath.startsWith(ROOT)) {
       res.writeHead(403); res.end('forbidden'); return;
