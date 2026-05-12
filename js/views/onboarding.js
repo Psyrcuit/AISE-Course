@@ -1,13 +1,24 @@
 // 4-step onboarding wizard: Welcome / Role / Goal / Level + optional placement.
 // Saves to aise26:settings.profile and aise26:settings.onboarding_seen.
+//
+// Two consumption patterns:
+//   1. As a route: `renderOnboarding()` returns the standard {node, title, ...}
+//      shape that the router consumes. On finish, navigates to `#/`.
+//   2. Embedded (e.g., inside the reveal overlay): import { mountOnboarding }
+//      and pass an `onFinish` callback. The same DOM node is returned, but
+//      the wizard delegates the post-finish navigation to the caller.
 
 import { el, clear, getSettings, setSettings, announce } from '../runtime.js';
 import { ROLE_OPTIONS, LEVEL_OPTIONS, GOAL_SUGGESTIONS, getPlacementQuiz, scorePlacement, recommendPath } from '../onboarding-data.js';
 
 const STEPS = ['welcome', 'role', 'goal', 'level'];
 
-export function renderOnboarding() {
-  // Mutable state collected across steps
+/**
+ * Build the wizard root and wire it up. Returns the DOM node directly. The
+ * caller decides what happens on finish.
+ * @param {{ onFinish?: (profile: object) => void, embedded?: boolean }} [opts]
+ */
+export function mountOnboarding(opts = {}) {
   const state = {
     step: 0,
     role: null,
@@ -16,7 +27,7 @@ export function renderOnboarding() {
     placement: null
   };
 
-  const root = el('div', { class: 'onboarding-root' });
+  const root = el('div', { class: 'onboarding-root' + (opts.embedded ? ' is-embedded' : '') });
 
   function rerender() {
     clear(root);
@@ -43,13 +54,17 @@ export function renderOnboarding() {
     };
     setSettings({ profile, onboarding_seen: true });
     announce('Onboarding complete. Welcome.');
-    window.location.hash = '#/';
+    if (typeof opts.onFinish === 'function') opts.onFinish(profile);
+    else window.location.hash = '#/';
   }
 
   rerender();
+  return root;
+}
 
+export function renderOnboarding() {
   return {
-    node: root,
+    node: mountOnboarding(),
     title: 'Welcome',
     crumbs: [],
     mainClass: 'no-rail full-bleed'

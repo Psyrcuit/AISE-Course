@@ -241,13 +241,12 @@
 #reveal-overlay {
   position: fixed;
   inset: 0;
-  background: var(--surface-0);
+  background: #08080A;
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  animation: fade-in var(--dur-slow) var(--ease-out);
 }
 #reveal-overlay.is-leaving {
   opacity: 0;
@@ -262,12 +261,43 @@
   height: 100%;
   z-index: 0;
 }
-#reveal-content {
+#reveal-foreground {
   position: relative;
   z-index: 1;
-  text-align: center;
-  max-width: 640px;
+  width: 100%;
+  max-width: 720px;
   padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#reveal-content {
+  text-align: center;
+  width: 100%;
+  max-width: 640px;
+  transition: opacity var(--dur-mid) var(--ease-out), transform var(--dur-mid) var(--ease-out);
+}
+#reveal-content.is-leaving {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+}
+
+/* ----- Wizard mounted inside the reveal ----- */
+#reveal-wizard {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  animation: fade-up var(--dur-slow) var(--ease-out) 200ms both;
+}
+#reveal-wizard .onboarding {
+  margin: 0;
+  width: min(560px, 100%);
+  background: color-mix(in oklch, var(--surface-1) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in oklch, var(--border-3) 70%, transparent);
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.6);
 }
 .reveal-eyebrow {
   font-family: var(--font-mono);

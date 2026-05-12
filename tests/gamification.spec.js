@@ -30,7 +30,7 @@ test.describe('gamification framework', () => {
   test('completing a concept awards XP and is idempotent', async ({ page }) => {
     await gotoApp(page, '#/concept/token');
     await clearStorage(page);
-    await page.evaluate(() => localStorage.setItem('aise26:settings', JSON.stringify({ reveal_seen: true })));
+    await page.evaluate(() => localStorage.setItem('aise26:settings', JSON.stringify({ reveal_seen: true, onboarding_seen: true })));
     await page.reload();
     await page.waitForFunction(() => document.querySelector('input#concept-complete-token'));
     await page.click('input#concept-complete-token');
@@ -54,7 +54,7 @@ test.describe('gamification framework', () => {
     await gotoApp(page, '#/');
     await clearStorage(page);
     await page.evaluate(() => {
-      localStorage.setItem('aise26:settings', JSON.stringify({ reveal_seen: true }));
+      localStorage.setItem('aise26:settings', JSON.stringify({ reveal_seen: true, onboarding_seen: true }));
       localStorage.setItem('aise26:xp', '249');
     });
     await page.reload();
@@ -72,7 +72,7 @@ test.describe('gamification framework', () => {
   test('first concept complete unlocks first_steps achievement', async ({ page }) => {
     await gotoApp(page, '#/concept/inference');
     await clearStorage(page);
-    await page.evaluate(() => localStorage.setItem('aise26:settings', JSON.stringify({ reveal_seen: true })));
+    await page.evaluate(() => localStorage.setItem('aise26:settings', JSON.stringify({ reveal_seen: true, onboarding_seen: true })));
     await page.reload();
     await page.waitForFunction(() => document.querySelector('input#concept-complete-inference'));
     await page.click('input#concept-complete-inference');

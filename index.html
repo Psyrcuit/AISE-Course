@@ -7,6 +7,45 @@
   <meta name="description" content="The map of everything a 2026 AI Solutions Engineer or Architect needs to know. 16 modules, 514 concepts, an interactive system map, gamified, offline-ready.">
   <title>AISE 2026 Course</title>
 
+  <!--
+    First-paint guard: if this is a first-time visit (or onboarding is
+    incomplete), set `data-bootstate="pre-reveal"` on <html> BEFORE the
+    stylesheets paint. That tag, combined with the inline <style> below,
+    keeps the rail/dashboard hidden until the reveal overlay has mounted
+    on top of them. Returning users with onboarding_seen=true skip this
+    entirely and see the dashboard normally.
+  -->
+  <script>
+    try {
+      var _s = JSON.parse(localStorage.getItem('aise26:settings') || '{}');
+      if (!_s.onboarding_seen) document.documentElement.dataset.bootstate = 'pre-reveal';
+    } catch (e) {
+      document.documentElement.dataset.bootstate = 'pre-reveal';
+    }
+    // Safety net: if the reveal script fails to load or errors out, clear
+    // the bootstate after 5s so the app stays usable rather than stuck
+    // behind a black screen.
+    setTimeout(function () {
+      if (document.documentElement.dataset.bootstate === 'pre-reveal') {
+        document.documentElement.removeAttribute('data-bootstate');
+      }
+    }, 5000);
+  </script>
+  <style>
+    /* Boot cover: solid dark surface from first paint until reveal mounts. */
+    html[data-bootstate="pre-reveal"] {
+      background: #08080A;
+    }
+    html[data-bootstate="pre-reveal"] body {
+      background: #08080A;
+    }
+    html[data-bootstate="pre-reveal"] .app,
+    html[data-bootstate="pre-reveal"] #bottom-tabs,
+    html[data-bootstate="pre-reveal"] #toasts {
+      visibility: hidden;
+    }
+  </style>
+
   <link rel="stylesheet" href="styles/tokens.css">
   <link rel="stylesheet" href="styles/base.css">
   <link rel="stylesheet" href="styles/layout.css">

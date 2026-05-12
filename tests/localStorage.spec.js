@@ -7,7 +7,7 @@ test.describe('localStorage round-trip', () => {
     await gotoApp(page, '#/concept/embedding');
     await clearStorage(page);
     await page.evaluate(() => {
-      const s = { reveal_seen: true };
+      const s = { reveal_seen: true, onboarding_seen: true };
       localStorage.setItem('aise26:settings', JSON.stringify(s));
     });
     await page.reload();
