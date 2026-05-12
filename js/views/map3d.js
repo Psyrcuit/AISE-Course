@@ -17,8 +17,13 @@ export function renderMap3D(params) {
   lsSet('map3d_opened', true);
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Build the page wrapper + canvas
-  const wrap = el('article', { 'aria-labelledby': 'm3-h1', class: 'fade-up' });
+  // Build the page wrapper + canvas. NOTE: we intentionally do NOT use
+  // the .fade-up class here. fade-up animates `transform: translateY()`
+  // which makes the article a containing block for any descendant with
+  // `position: fixed`. The .map3d-stage relies on `position: fixed`
+  // being relative to the viewport so it can fill the screen below the
+  // topstrip; with a transformed ancestor the stage collapses to 0×0.
+  const wrap = el('article', { 'aria-labelledby': 'm3-h1' });
   wrap.appendChild(el('div', { class: 'home-eyebrow' }, 'System Map · 3D'));
   wrap.appendChild(el('h1', { id: 'm3-h1', style: 'position: absolute; left: -9999px;' }, '3D System Map'));
 
