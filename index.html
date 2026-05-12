@@ -193,7 +193,9 @@
 
   <div id="toasts" role="log" aria-live="polite" aria-relevant="additions" aria-label="Notifications"></div>
 
-  <!-- Mobile bottom-tab navigation (visible only under 768px via CSS) -->
+  <!-- Mobile bottom-tab navigation (visible only under 768px via CSS).
+       The hamburger ☰ on the top-left opens the full rail drawer for
+       every other surface, so we don't duplicate it as a "More" tab. -->
   <nav id="bottom-tabs" class="bottom-tabs" aria-label="Mobile primary navigation">
     <a class="bottom-tab" href="#/" data-tab-match="^#?/?$">
       <span class="bottom-tab-ico" aria-hidden="true">◯</span>
@@ -211,10 +213,6 @@
       <span class="bottom-tab-ico" aria-hidden="true">▦</span>
       <span class="bottom-tab-label">Build</span>
     </a>
-    <button class="bottom-tab" id="bottom-tab-more" type="button" aria-label="More navigation">
-      <span class="bottom-tab-ico" aria-hidden="true">⋯</span>
-      <span class="bottom-tab-label">More</span>
-    </button>
   </nav>
 
   <!-- Vendor: 2D force-directed graph viewer (Canvas2D + d3-force). UMD, sets window.ForceGraph. -->
@@ -230,15 +228,6 @@
     });
     document.getElementById('voice-trigger')?.addEventListener('click', () => {
       if (window.aise26 && window.aise26.voice) window.aise26.voice.start();
-    });
-    document.getElementById('bottom-tab-more')?.addEventListener('click', () => {
-      const rail = document.getElementById('rail');
-      const toggle = document.getElementById('rail-toggle');
-      if (rail) {
-        const open = rail.getAttribute('data-open') === 'true';
-        rail.setAttribute('data-open', String(!open));
-        if (toggle) toggle.setAttribute('aria-expanded', String(!open));
-      }
     });
     // Highlight active bottom-tab on every hashchange.
     function refreshBottomTabs() {

@@ -158,6 +158,7 @@
   position: absolute;
   bottom: 18px;
   left: 18px;
+  max-width: calc(100% - 36px);
   padding: 12px 14px;
   background: color-mix(in oklch, var(--surface-1) 90%, transparent);
   border: 1px solid var(--border-2);
@@ -240,6 +241,25 @@
   color: var(--text-2);
   font-family: var(--font-mono);
   font-size: 10px;
+}
+
+/* On mobile, push the bottom-anchored UI (legend / help / mini-map) up
+   above the fixed bottom-tab navigation (64px + safe-area inset) so it
+   doesn't get clipped or covered. */
+@media (max-width: 767px) {
+  .map-legend,
+  .map-mini {
+    bottom: calc(80px + env(safe-area-inset-bottom, 0));
+  }
+  .map-help {
+    bottom: calc(80px + env(safe-area-inset-bottom, 0));
+    /* Drop down to legend's left edge on narrow screens so the two
+       elements stack vertically instead of overlapping horizontally. */
+    left: 18px;
+    right: auto;
+    transform: none;
+    bottom: calc(132px + env(safe-area-inset-bottom, 0));
+  }
 }
 
 /* ==========================================================================
