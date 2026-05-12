@@ -17,6 +17,8 @@ Thumbs.db
 # Claude Code transient
 .claude/usage.log
 .claude/cache/
+.claude/scheduled_tasks.lock
+.claude/scheduled_tasks/
 
 # Coverage / temp
 coverage/
