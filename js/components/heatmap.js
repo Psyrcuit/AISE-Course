@@ -96,6 +96,21 @@ export function renderHeatmap({ days = 365, label = 'Daily activity' } = {}) {
   inner.appendChild(grid);
   wrap.appendChild(inner);
   wrap.appendChild(legend);
+
+  // Anchor the scroll position to the right edge once the heatmap is in
+  // the DOM. The grid is 53 columns of 12px cells (~740px wide); on a
+  // mobile viewport the visible window is ~330px. Without this, the
+  // default view shows the OLDEST week and the user has to swipe right
+  // to find today's activity. Scroll-to-end flips that: today sits at
+  // the right edge, swipe left walks back through time.
+  queueMicrotask(() => {
+    requestAnimationFrame(() => {
+      if (wrap.scrollWidth > wrap.clientWidth) {
+        wrap.scrollLeft = wrap.scrollWidth - wrap.clientWidth;
+      }
+    });
+  });
+
   return wrap;
 }
 
