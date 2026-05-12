@@ -2,6 +2,7 @@
 import { FLESHED } from '../fleshed.js';
 import { QUIZZES } from '../quizzes.js';
 import { FLASHCARDS } from '../flashcards.js';
+import { shuffleDeck } from '../shuffle.js';
 import { setSettings, el, announce } from '../runtime.js';
 import { conceptBySlug, moduleByN, linkifyText, resolveCrossRef } from '../crossref.js';
 import {
@@ -213,8 +214,12 @@ export function renderConceptPage(slug) {
     wrap.appendChild(fcSec);
   }
 
-  // Quiz
-  const quizData = QUIZZES && QUIZZES[slug];
+  // Quiz - shuffle a fresh deck per page render so answer positions
+  // and question order are different every time. Source data in
+  // quizzes.js has 95% of correct answers at position 1; without
+  // this shuffle the quiz is trivially gamed by clicking option 2.
+  const rawQuiz = QUIZZES && QUIZZES[slug];
+  let quizData = rawQuiz && rawQuiz.length ? shuffleDeck(rawQuiz) : null;
   if (quizData && quizData.length) {
     const quizSec = el('section', { class: 'concept-section' }, [el('h2', null, 'Quiz')]);
     let currentIdx = 0;
@@ -236,6 +241,8 @@ export function renderConceptPage(slug) {
         }
         const retry = el('button', { class: 'btn btn-sm btn-ghost', type: 'button' }, 'Retry');
         retry.addEventListener('click', () => {
+          // Re-shuffle on retry so a memorized run can't be replayed.
+          quizData = shuffleDeck(rawQuiz);
           currentIdx = 0;
           correctCount = 0;
           renderQuestion();

@@ -4,6 +4,7 @@
 import { el, clear, announce } from '../runtime.js';
 import { CONCEPTS, MODULES } from '../data.js';
 import { QUIZZES } from '../quizzes.js';
+import { shuffleQuestion } from '../shuffle.js';
 import { conceptsForModule, conceptBySlug } from '../crossref.js';
 import { awardXP, getConceptState } from '../gamification.js';
 import { XP_VALUES } from '../gam-data.js';
@@ -24,10 +25,13 @@ export function renderModuleQuiz(n) {
     if (!qs || !qs.length) continue;
     for (const q of qs) allQs.push({ slug: c.slug, conceptName: c.name, ...q });
   }
-  // Stable seed per day so a user's "today's quiz" is consistent
+  // Stable seed per day so a user's "today's quiz" is the SAME 10
+  // questions on retake within a day. But the option ORDER inside each
+  // question gets re-shuffled per render so the user can't just memorize
+  // "the answer was the second one" between attempts.
   const today = new Date();
   const seed = today.getUTCFullYear() * 10000 + (today.getUTCMonth() + 1) * 100 + today.getUTCDate() + num;
-  const deck = _shuffleSeeded(allQs, seed).slice(0, QUESTIONS_PER_QUIZ);
+  const deck = _shuffleSeeded(allQs, seed).slice(0, QUESTIONS_PER_QUIZ).map(shuffleQuestion);
 
   const wrap = el('article', { 'aria-labelledby': 'mq-h1', class: 'fade-up', 'data-module': String(num) });
   wrap.appendChild(el('div', { class: 'home-eyebrow' }, 'Cumulative quiz'));

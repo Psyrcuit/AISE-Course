@@ -5,12 +5,16 @@ import { CAPSTONES, XP_VALUES } from '../gam-data.js';
 import { lsGet, lsSet, el, clear, announce, getSettings } from '../runtime.js';
 import { conceptBySlug, moduleByN } from '../crossref.js';
 import { awardXP, getCapstoneState, passThreshold } from '../gamification.js';
+import { shuffleQuestion } from '../shuffle.js';
 import { renderEmpty, renderNotFound } from './main.js';
 
 export function renderCapstone(n) {
   const num = Number(n);
-  const cs = CAPSTONES[num];
-  if (!cs) return renderEmpty('Capstone (Module ' + num + ')', 'Capstone for this module is not yet authored. Capstones populate during module-fill phases.');
+  const rawCs = CAPSTONES[num];
+  if (!rawCs) return renderEmpty('Capstone (Module ' + num + ')', 'Capstone for this module is not yet authored. Capstones populate during module-fill phases.');
+  // Shuffle each step's options per render. The capstone steps stay in
+  // their authored narrative order; only the answer positions move.
+  const cs = { ...rawCs, steps: rawCs.steps.map(shuffleQuestion) };
   const m = moduleByN(num);
 
   const wrap = el('article', { class: 'fade-up', 'aria-labelledby': 'cap-h1', 'data-module': String(num) });

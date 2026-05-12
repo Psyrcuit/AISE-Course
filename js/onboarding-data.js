@@ -2,6 +2,7 @@
 // Quiz pulls from existing QUIZZES so we don't duplicate content.
 
 import { QUIZZES } from './quizzes.js';
+import { shuffleQuestion } from './shuffle.js';
 
 // Slugs we want for the 12-question diagnostic.
 // Mix: 4 from M1 (foundations), 4 from M3 (RAG), 3 from M4 (agents), 1 from M5.
@@ -21,7 +22,10 @@ export function getPlacementQuiz() {
   for (const slug of PLACEMENT_SLUGS) {
     const qs = QUIZZES[slug];
     if (qs && qs.length) {
-      out.push({ slug, ...qs[0] });
+      // Shuffle option order per call so the placement quiz can't be
+      // gamed by clicking position 1 every time (the source data has
+      // 95% of correct answers at that position).
+      out.push({ slug, ...shuffleQuestion(qs[0]) });
     }
   }
   return out;
