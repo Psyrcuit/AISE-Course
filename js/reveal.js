@@ -60,7 +60,18 @@ function showReveal() {
   wireEnter(overlay);
 }
 
-// ----- Canvas: constellation animation. Runs forever until cancelled. -----
+// ----- Canvas: layered parallax starfield with transient constellations -----
+//
+// Three depth layers of stars (back / mid / front). Each star has its own
+// twinkle phase + amplitude so the field breathes softly rather than
+// pulsing in unison. A small camera drift (gentle, ~minute-long period)
+// gives each layer parallax movement.
+//
+// Constellation lines: only spawn between front-layer stars within range.
+// Each edge has a finite lifespan with fade-in/fade-out so they form
+// briefly, dissolve, and never accumulate. Dashed stroke + low alpha so
+// they read as impermanent rather than a connected graph.
+
 function startCanvas(overlay) {
   const canvas = overlay.querySelector('#reveal-canvas');
   if (!canvas) return;
@@ -69,7 +80,8 @@ function startCanvas(overlay) {
   let W = window.innerWidth;
   let H = window.innerHeight;
   function resize() {
-    const dpr = window.devicePixelRatio || 1;
+    // Cap DPR at 2 so 4K + retina screens don't render at 4K×2 = 8K wide.
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
     W = window.innerWidth;
     H = window.innerHeight;
     canvas.width = W * dpr;
@@ -77,103 +89,203 @@ function startCanvas(overlay) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   resize();
-  window.addEventListener('resize', resize);
 
-  // Constellation of points + nearest-neighbor edges.
-  const NODES = 220;
-  const points = [];
-  for (let i = 0; i < NODES; i++) {
-    points.push({
-      x: W * 0.5 + (Math.random() - 0.5) * W * 0.95,
-      y: H * 0.5 + (Math.random() - 0.5) * H * 0.85,
-      r: 0.5 + Math.random() * 1.7,
-      vx: (Math.random() - 0.5) * 0.05,
-      vy: (Math.random() - 0.5) * 0.05
-    });
+  // ---- Star field ----
+  const LAYERS = [
+    { count: 110, parallax: 0.25, sizeRange: [0.35, 0.95], alphaRange: [0.18, 0.42], pulseAmp: 0.06 },
+    { count: 130, parallax: 0.55, sizeRange: [0.65, 1.55], alphaRange: [0.32, 0.65], pulseAmp: 0.11 },
+    { count: 70,  parallax: 1.0,  sizeRange: [1.10, 2.60], alphaRange: [0.55, 0.95], pulseAmp: 0.20 }
+  ];
+
+  // World-space coords extend slightly past the viewport so camera drift
+  // never reveals an empty margin.
+  const MARGIN = 80;
+  const stars = [];
+  for (let li = 0; li < LAYERS.length; li++) {
+    const L = LAYERS[li];
+    for (let i = 0; i < L.count; i++) {
+      const [smin, smax] = L.sizeRange;
+      const [amin, amax] = L.alphaRange;
+      stars.push({
+        x: -MARGIN + Math.random() * (W + MARGIN * 2),
+        y: -MARGIN + Math.random() * (H + MARGIN * 2),
+        size: smin + Math.random() * (smax - smin),
+        baseAlpha: amin + Math.random() * (amax - amin),
+        pulseSpeed: 0.0004 + Math.random() * 0.0014,
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseAmp: L.pulseAmp * (0.55 + Math.random() * 0.5),
+        layerIdx: li,
+        // Brightest front stars get a soft halo + occasional rare flicker.
+        glow: li === 2 && Math.random() < 0.32,
+        flickerHz: 0.0001 + Math.random() * 0.0003,
+        flickerPhase: Math.random() * Math.PI * 2
+      });
+    }
   }
-  const edges = [];
-  for (let i = 0; i < points.length; i++) {
-    const nearest = [];
-    for (let j = 0; j < points.length; j++) {
-      if (j === i) continue;
-      const dx = points[i].x - points[j].x;
-      const dy = points[i].y - points[j].y;
-      nearest.push({ j, d2: dx * dx + dy * dy });
+  // Indices of front-layer stars (used as constellation endpoints).
+  const frontIdx = stars.map((s, i) => s.layerIdx === 2 ? i : -1).filter(i => i >= 0);
+
+  // ---- Reposition stars if the viewport resizes substantially. ----
+  // We keep existing star positions but extend the field if needed.
+  function reflowOnResize() {
+    resize();
+  }
+  window.addEventListener('resize', reflowOnResize);
+
+  // ---- Constellation edges ----
+  const edges = [];                  // { aIdx, bIdx, bornAt, lifespan }
+  const MAX_EDGES = 16;
+  const EDGE_LIFE_MS = [4500, 11000];
+  const EDGE_FADE_IN = 1100;
+  const EDGE_FADE_OUT = 1700;
+  const SPAWN_INTERVAL_MS = [700, 1800];
+  const PROXIMITY = 320;             // px - max distance for edge candidates
+  let nextSpawnAt = performance.now() + 1200;
+
+  function spawnEdge(now) {
+    if (frontIdx.length < 2) return;
+    const aIdx = frontIdx[Math.floor(Math.random() * frontIdx.length)];
+    const a = stars[aIdx];
+    const candidates = [];
+    for (const bIdx of frontIdx) {
+      if (bIdx === aIdx) continue;
+      // Avoid duplicate edges (already-active connections between same pair).
+      let already = false;
+      for (const e of edges) {
+        if ((e.aIdx === aIdx && e.bIdx === bIdx) || (e.aIdx === bIdx && e.bIdx === aIdx)) {
+          already = true; break;
+        }
+      }
+      if (already) continue;
+      const b = stars[bIdx];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < PROXIMITY * PROXIMITY) candidates.push({ idx: bIdx, d2 });
     }
-    nearest.sort((a, b) => a.d2 - b.d2);
-    for (let k = 0; k < 2 + Math.floor(Math.random() * 2); k++) {
-      const e = nearest[k];
-      if (e && e.j > i) edges.push({ a: i, b: e.j, alpha: 0.15 + Math.random() * 0.2 });
-    }
+    if (!candidates.length) return;
+    candidates.sort((p, q) => p.d2 - q.d2);
+    // Pick one of the 6 nearest with weighted randomness.
+    const pick = candidates[Math.floor(Math.random() * Math.min(candidates.length, 6))];
+    const lifespan = EDGE_LIFE_MS[0] + Math.random() * (EDGE_LIFE_MS[1] - EDGE_LIFE_MS[0]);
+    edges.push({ aIdx, bIdx: pick.idx, bornAt: now, lifespan });
   }
 
+  // ---- Render loop ----
   const start = performance.now();
-  // Intro reveal (alpha ramp + slight zoom) completes in INTRO_MS; after that
-  // the animation continues in steady-state until the overlay is dismissed.
-  const INTRO_MS = 3200;
+  const INTRO_MS = 1800;             // alpha ramp on entrance
   let raf = null;
 
   function frame(now) {
     if (overlay.dataset.cancelled === 'true') return;
     const elapsed = now - start;
     const introT = Math.min(1, elapsed / INTRO_MS);
-    // Gentle 12s camera oscillation that keeps the field alive without
-    // ever feeling like a hard restart of the animation.
-    const cycleT = (elapsed / 12000) * (Math.PI * 2);
-    const camOffsetX = Math.sin(cycleT) * W * 0.03;
-    const camOffsetY = Math.cos(cycleT * 0.5) * H * 0.02;
-    const zoom = 1.05 + introT * 0.08 + Math.sin(cycleT * 0.4) * 0.01;
+    // Easing for the entrance: cubic out so stars fade in smoothly.
+    const introEase = 1 - Math.pow(1 - introT, 3);
 
-    ctx.clearRect(0, 0, W, H);
+    // Spawn edges
+    if (now >= nextSpawnAt && edges.length < MAX_EDGES) {
+      spawnEdge(now);
+      nextSpawnAt = now + SPAWN_INTERVAL_MS[0] + Math.random() * (SPAWN_INTERVAL_MS[1] - SPAWN_INTERVAL_MS[0]);
+    }
 
-    // Background gradient
-    const grad = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.max(W, H));
-    grad.addColorStop(0, 'rgba(15, 15, 20, 0)');
-    grad.addColorStop(1, 'rgba(8, 8, 10, 0.8)');
+    // Camera: very slow drift (~80s + ~110s components on different axes
+    // so the motion never feels cyclical).
+    const camX = Math.sin(elapsed * 0.000078) * 26 + Math.sin(elapsed * 0.000031) * 12;
+    const camY = Math.cos(elapsed * 0.000059) * 20 + Math.cos(elapsed * 0.000043) * 9;
+
+    // Clear with a deep-space radial gradient.
+    ctx.fillStyle = '#06060A';
+    ctx.fillRect(0, 0, W, H);
+    const grad = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.85);
+    grad.addColorStop(0, 'rgba(18, 16, 32, 1)');
+    grad.addColorStop(0.6, 'rgba(10, 9, 18, 1)');
+    grad.addColorStop(1, 'rgba(6, 6, 10, 1)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    ctx.save();
-    ctx.translate(W * 0.5 + camOffsetX, H * 0.5 + camOffsetY);
-    ctx.scale(zoom, zoom);
-    ctx.translate(-W * 0.5, -H * 0.5);
+    // ---- Stars ----
+    for (const s of stars) {
+      const L = LAYERS[s.layerIdx];
+      const sx = s.x + camX * L.parallax;
+      const sy = s.y + camY * L.parallax;
 
-    // Edges
-    ctx.lineWidth = 0.6;
-    for (const e of edges) {
-      const a = points[e.a], b = points[e.b];
-      ctx.strokeStyle = `rgba(180, 160, 255, ${e.alpha * introT})`;
+      // Pulse: slow sine modulation of alpha.
+      const pulse = Math.sin(elapsed * s.pulseSpeed + s.pulsePhase);
+      // Optional rare flicker: a much slower additional pulse that
+      // occasionally aligns with the main one for a brighter moment.
+      const flicker = Math.sin(elapsed * s.flickerHz + s.flickerPhase);
+      // Soft "twinkle" component - small high-frequency variation only on
+      // glow stars, gated by the slow flicker (so most of the time it's
+      // calm, but occasionally a star shimmers).
+      let twinkle = 0;
+      if (s.glow && flicker > 0.7) {
+        twinkle = Math.sin(elapsed * 0.012 + s.pulsePhase) * 0.08 * (flicker - 0.7) / 0.3;
+      }
+      const alpha = Math.max(0, (s.baseAlpha + s.pulseAmp * pulse + twinkle) * introEase);
+      if (alpha < 0.02) continue;
+
+      // Soft halo for glow stars.
+      if (s.glow) {
+        const haloR = s.size * (5 + Math.max(0, flicker) * 2);
+        const halo = ctx.createRadialGradient(sx, sy, 0, sx, sy, haloR);
+        halo.addColorStop(0, `rgba(196, 184, 255, ${alpha * 0.32})`);
+        halo.addColorStop(0.5, `rgba(196, 184, 255, ${alpha * 0.08})`);
+        halo.addColorStop(1, 'rgba(196, 184, 255, 0)');
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(sx, sy, haloR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Star body. Slight color tint per layer (cooler/warmer).
+      const tint = s.layerIdx === 2
+        ? `rgba(244, 244, 255, ${alpha})`
+        : s.layerIdx === 1
+          ? `rgba(228, 226, 246, ${alpha})`
+          : `rgba(202, 200, 224, ${alpha})`;
+      ctx.fillStyle = tint;
       ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    }
-    // Nodes
-    for (const p of points) {
-      // Micro-drift; wrap around viewport softly.
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < -50) p.x = W + 50;
-      else if (p.x > W + 50) p.x = -50;
-      if (p.y < -50) p.y = H + 50;
-      else if (p.y > H + 50) p.y = -50;
-      ctx.fillStyle = `rgba(244, 244, 245, ${0.4 + 0.55 * introT})`;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r * (0.3 + introT * 1.4), 0, Math.PI * 2);
+      ctx.arc(sx, sy, s.size, 0, Math.PI * 2);
       ctx.fill();
     }
-    ctx.restore();
+
+    // ---- Edges (dashed, transient) ----
+    ctx.lineWidth = 0.7;
+    ctx.setLineDash([2, 5]);
+    const frontPx = LAYERS[2].parallax;
+    for (let i = edges.length - 1; i >= 0; i--) {
+      const e = edges[i];
+      const age = now - e.bornAt;
+      if (age > e.lifespan) { edges.splice(i, 1); continue; }
+      const fadeIn = Math.min(1, age / EDGE_FADE_IN);
+      const fadeOut = Math.min(1, (e.lifespan - age) / EDGE_FADE_OUT);
+      const lifeAlpha = Math.min(fadeIn, fadeOut);
+      if (lifeAlpha <= 0) continue;
+      const sa = stars[e.aIdx];
+      const sb = stars[e.bIdx];
+      const ax = sa.x + camX * frontPx;
+      const ay = sa.y + camY * frontPx;
+      const bx = sb.x + camX * frontPx;
+      const by = sb.y + camY * frontPx;
+      ctx.strokeStyle = `rgba(180, 160, 255, ${0.22 * lifeAlpha * introEase})`;
+      // Vary the dash offset per edge for a less mechanical look.
+      ctx.lineDashOffset = (e.bornAt * 0.001) % 7;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.lineDashOffset = 0;
 
     raf = requestAnimationFrame(frame);
   }
   raf = requestAnimationFrame(frame);
 
-  // Stash teardown hooks on the overlay so wireEnter / dismissOverlay can
-  // call them.
   overlay.__cleanupCanvas = () => {
     overlay.dataset.cancelled = 'true';
     if (raf) cancelAnimationFrame(raf);
-    window.removeEventListener('resize', resize);
+    window.removeEventListener('resize', reflowOnResize);
   };
 }
 
@@ -191,19 +303,15 @@ function wireEnter(overlay) {
 }
 
 // ----- Swap reveal-content for the onboarding wizard. -----
+// Both panels are grid-stacked at the same cell, so we crossfade them
+// in place rather than letting layout flow squish them side by side.
 function swapToWizard(overlay) {
   const fg = overlay.querySelector('#reveal-foreground');
   if (!fg) return;
-  const oldContent = overlay.querySelector('#reveal-content');
-  if (oldContent) {
-    oldContent.classList.add('is-leaving');
-    setTimeout(() => oldContent.remove(), 320);
-  }
 
+  // Build the wizard shell (initial state: opacity 0, slight translate).
   const wizardShell = document.createElement('div');
   wizardShell.id = 'reveal-wizard';
-  wizardShell.className = 'reveal-wizard';
-  // The wizard mounts inline with onFinish dismissing the overlay.
   const wizardNode = mountOnboarding({
     embedded: true,
     onFinish: () => dismissOverlay(overlay)
@@ -211,11 +319,26 @@ function swapToWizard(overlay) {
   wizardShell.appendChild(wizardNode);
   fg.appendChild(wizardShell);
 
-  // Move focus into the wizard for screen readers.
+  // Start the leave transition on the welcome card.
+  const oldContent = overlay.querySelector('#reveal-content');
+  if (oldContent) oldContent.classList.add('is-leaving');
+
+  // Force a reflow before adding is-entering so the transition runs
+  // from the initial CSS state (opacity 0) rather than skipping straight
+  // to the final value.
+  void wizardShell.offsetWidth;
+  wizardShell.classList.add('is-entering');
+
+  // Remove the old content after its transition completes.
+  setTimeout(() => {
+    if (oldContent && oldContent.parentNode) oldContent.parentNode.removeChild(oldContent);
+  }, 480);
+
+  // Move focus into the wizard once the transition has begun.
   setTimeout(() => {
     const firstFocusable = wizardShell.querySelector('button, [href], [tabindex]:not([tabindex="-1"])');
     if (firstFocusable) firstFocusable.focus();
-  }, 350);
+  }, 540);
 }
 
 // ----- Tear down the overlay (after wizard finish or skip). -----

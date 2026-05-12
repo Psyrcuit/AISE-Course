@@ -241,12 +241,34 @@
 #reveal-overlay {
   position: fixed;
   inset: 0;
-  background: #08080A;
+  background: #06060A;
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+
+  /*
+   * Scope dark-mode tokens locally so the cinematic stays readable even
+   * when the parent page is set to a light theme (the canvas background
+   * is intentionally always dark). Without this, .reveal-title rendered
+   * as #0A0A0B (near-black) on the dark canvas in light-theme sessions.
+   */
+  --surface-0: #08080A;
+  --surface-1: #1A1A22;
+  --surface-2: #25252E;
+  --surface-3: #2E2E38;
+  --text-1: #F4F4F5;
+  --text-2: #C5C5CD;
+  --text-3: #93939D;
+  --text-4: #6B6B73;
+  --border-1: #25252E;
+  --border-2: #34343E;
+  --border-3: #45454F;
+  --accent: #B4A0FF;
+  --accent-strong: #8B5CF6;
+  --accent-soft: #C9B8FF;
+  color: var(--text-1);
 }
 #reveal-overlay.is-leaving {
   opacity: 0;
@@ -261,42 +283,59 @@
   height: 100%;
   z-index: 0;
 }
+
+/*
+ * Grid-stack the welcome card and wizard at the same cell so they
+ * crossfade in place instead of squishing into a shared flex row.
+ */
 #reveal-foreground {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 720px;
   padding: 0 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+}
+#reveal-content,
+#reveal-wizard {
+  grid-area: 1 / 1;
+  width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 #reveal-content {
   text-align: center;
-  width: 100%;
   max-width: 640px;
-  transition: opacity var(--dur-mid) var(--ease-out), transform var(--dur-mid) var(--ease-out);
+  margin: 0 auto;
+  transition: opacity 360ms var(--ease-out), transform 360ms var(--ease-out);
 }
 #reveal-content.is-leaving {
   opacity: 0;
-  transform: translateY(-12px);
+  transform: translateY(-6px) scale(0.985);
   pointer-events: none;
 }
 
 /* ----- Wizard mounted inside the reveal ----- */
 #reveal-wizard {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  animation: fade-up var(--dur-slow) var(--ease-out) 200ms both;
+  max-width: 560px;
+  opacity: 0;
+  transform: translateY(8px) scale(0.985);
+  transition: opacity 420ms var(--ease-out) 120ms, transform 420ms var(--ease-out) 120ms;
+}
+#reveal-wizard.is-entering {
+  opacity: 1;
+  transform: none;
 }
 #reveal-wizard .onboarding {
   margin: 0;
-  width: min(560px, 100%);
-  background: color-mix(in oklch, var(--surface-1) 88%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in oklch, var(--border-3) 70%, transparent);
+  width: 100%;
+  background: color-mix(in oklch, #16161E 78%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid color-mix(in oklch, #45454F 60%, transparent);
   box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.6);
 }
 .reveal-eyebrow {
